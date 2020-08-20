@@ -1,0 +1,129 @@
+.block-container {
+  padding: 8px;
+  border: solid;
+  border-color: white;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+  border-left-width: 5px;
+}
+
+.input {
+  display: flex;
+  /* height: 30px; */
+}
+
+.prompt-container {
+  width: 12%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.inner-block-container {
+  width: 88%;
+}
+
+.block-name-container {
+  background-color: skyblue;
+  padding: 5px;
+  border-radius: 10px 10px 0 0;
+}
+
+.block-name-wrapper {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.inner-block {
+  background-color: #e0e0e0;
+  padding: 5px;
+  border: solid;
+  border-color: #e0e0e0;
+  display: block;
+  overflow: hidden;
+}
+
+.inner-block:focus {
+  outline: 0px solid transparent;
+}
+
+.selected {
+  /* border: solid; */
+  border-color: rgb(102, 187, 106);
+  /* border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+  border-left-width: 5px; */
+}
+
+.hidden {
+  display: none;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.edit-block-name-box {
+  margin-right: 10px;
+  background-color: snow;
+}
+
+.edit-block-name {
+  /* display: inline-block; */
+}
+
+.options-tab-container {
+  background-color: rgb(221, 221, 221);
+  height: 30px;
+  overflow: auto;
+  white-space: nowrap;
+  /* padding-left: 41px; */
+}
+
+.option-tab-selected {
+  display: inline-block;
+  padding: 5px;
+  /* background-color: #e0e0e0; */
+  background-color: rgb(238, 238, 238);
+}
+
+.option-tab-unselected {
+  border-right: solid;
+  border-right-color: #ebebeb;
+  display: inline-block;
+  padding: 5px;
+  background-color: rgb(221, 221, 221);
+}
+
+.option-name-container {
+  /* pointer-events: none; */
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.edit-option-name {
+  /* display: inline-block; */
+}
+
+.edit-option-name-box {
+  margin-right: 10px;
+  background-color: snow;
+}
+
+/* .edit-option-icon {
+  pointer-events: none;
+}
+
+.close-option-icon {
+  pointer-events: none;
+} */
+
+.plus.circle.icon {
+  margin-left: 3px;
+}
+
+.code-pre {
+  margin-top: 0;
+  margin-bottom: 0;
+}

@@ -27,7 +27,7 @@ import './Accordion.css';
 
 const Accordion = (props) => {
   const renderedBlocks = props.blocks.map((block) => {
-    const active = props.selectedBlock.includes(block.id) ? 'active' : '';
+    const active = props.expandedBlocks.includes(block.id) ? 'active' : '';
     return <React.Fragment>
       <div className={`title ${active} title-container`}>
         <i className="dropdown icon dropdown-icon" onClick={() => props.onBlockDropDownClick(block.id)}></i>
