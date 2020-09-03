@@ -118,6 +118,7 @@ class TopMenu extends React.Component {
           <Dropdown text='File' pointing className='link item'>
             <Dropdown.Menu>
               <Dropdown.Item onClick={this.props.onDownloadClickHandler}>Download</Dropdown.Item>
+              <Dropdown.Item onClick={this.props.onCompileClickHandler}>Compile</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
 

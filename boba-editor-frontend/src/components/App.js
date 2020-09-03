@@ -4,6 +4,7 @@ import VerticalMenu from './VerticalMenu';
 import Editor from './Editor';
 import './Editor.css';
 import FileSaver from 'file-saver';
+import axios from 'axios';
 
 class App extends React.Component {
   state = {
@@ -422,6 +423,15 @@ class App extends React.Component {
     FileSaver.saveAs(blob, filename);
   };
 
+  onCompileClickHandler = async () => {
+    const response = await axios.post(
+      'http://127.0.0.1:5000/compile',
+      {script: this.makeUpScriptFile()},
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    console.log(response);
+  }
+
   makeUpScriptFile = () => {
     let script = "";
     for (let i = 0; i < this.state.blocks.length; i++) {
@@ -460,6 +470,7 @@ class App extends React.Component {
           onBlockTypeSelectHandler={this.onBlockTypeSelectHandler}
           onBlockLanguageSelectHandler={this.onBlockLanguageSelectHandler}
           onDownloadClickHandler={this.onDownloadClickHandler}
+          onCompileClickHandler={this.onCompileClickHandler}
         />
         <div className="main-area">
           <div className="ui container">
