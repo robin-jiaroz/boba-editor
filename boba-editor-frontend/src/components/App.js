@@ -425,7 +425,7 @@ class App extends React.Component {
 
   onCompileClickHandler = async () => {
     const response = await axios.post(
-      'http://127.0.0.1:5000/compile',
+      '/compile',
       {script: this.makeUpScriptFile()},
       { headers: { 'Content-Type': 'application/json' } }
     );
@@ -472,6 +472,7 @@ class App extends React.Component {
           onDownloadClickHandler={this.onDownloadClickHandler}
           onCompileClickHandler={this.onCompileClickHandler}
         />
+        {/* <p>My Token = {window.token}</p> */}
         <div className="main-area">
           <div className="ui container">
             {/* <VerticalMenu /> */}
