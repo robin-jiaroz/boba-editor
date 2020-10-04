@@ -108,8 +108,8 @@ class TopMenu extends React.Component {
     }
 
     return (
-      <div className="">
-        <div className="ui fixed menu">
+      <div className="nav-bar">
+        <div className="ui fixed menu" style={{position: "relative"}}>
           <a href="#">
             <div className="item" onClick={this.onLogoClickHandler}>
               <img src={logo} alt="Boba Editor Logo"></img>

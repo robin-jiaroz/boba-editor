@@ -5,27 +5,78 @@ import Editor from './Editor';
 import './Editor.css';
 import FileSaver from 'file-saver';
 import axios from 'axios';
+// import SplitPane, { Pane } from 'react-split-pane';
+import SplitPane from 'react-split-pane';
+import Pane from 'react-split-pane/lib/Pane';
+import Console from './Console';
 
 class App extends React.Component {
-  state = {
-    blocks: [
-      {
-        id: 0,
-        title: 'Boba Config',
-        content: 'Please define your Boba Config here.',
-        blockType: 'Boba Config',
-        language: 'json',
-        options: [],
-        selectedOption: undefined,
-        nextOptionId: undefined
-      }
-    ],
-    expandedBlocks: [0],
-    nextBlockId: 1,
-    selectedBlock: 0,
-    selectedBlockType: 'Boba Config',
-    selectedBlockLanguage: 'json'
-  };
+  // state = {
+  //   blocks: [
+  //     {
+  //       id: 0,
+  //       title: 'Boba Config',
+  //       content: 'Please define your Boba Config here.',
+  //       blockType: 'Boba Config',
+  //       language: 'json',
+  //       options: [],
+  //       selectedOption: undefined,
+  //       nextOptionId: undefined
+  //     }
+  //   ],
+  //   expandedBlocks: [0],
+  //   nextBlockId: 1,
+  //   selectedBlock: 0,
+  //   selectedBlockType: 'Boba Config',
+  //   selectedBlockLanguage: 'json',
+  //   output: 'No output yet. Please compile to see the output.',
+  //   consoleSize: '30px'
+  // };
+
+  constructor(props) {
+    console.log('constructor is invoked!');
+    super(props);
+    let blocks = JSON.parse(localStorage.getItem('blocks'));
+    if (!blocks) {
+      blocks = [
+        {
+          id: 0,
+          title: 'Boba Config',
+          content: 'Please define your Boba Config here.',
+          blockType: 'Boba Config',
+          language: 'json',
+          options: [],
+          selectedOption: undefined,
+          nextOptionId: undefined
+        }
+      ];
+    }
+    console.log('blocks from constructor');
+    console.log(blocks);
+    let expandedBlocks = JSON.parse(localStorage.getItem('expandedBlocks'));
+    if (!expandedBlocks) {
+      expandedBlocks = [0];
+    }
+    console.log('expandedBlocks from constructor');
+    console.log(expandedBlocks);
+    let nextBlockId = localStorage.getItem('nextBlockId');
+    let selectedBlock = localStorage.getItem('selectedBlock');
+    let selectedBlockType = localStorage.getItem('selectedBlockType');
+    let selectedBlockLanguage = localStorage.getItem('selectedBlockLanguage');
+    let output = localStorage.getItem('output');
+    let consoleSize = localStorage.getItem('consoleSize');
+
+    this.state = {
+      blocks: blocks,
+      expandedBlocks: expandedBlocks,
+      nextBlockId: nextBlockId ? nextBlockId : 1,
+      selectedBlock: selectedBlock ? selectedBlock : 0,
+      selectedBlockType: selectedBlockType ? selectedBlockType : 'Boba Config',
+      selectedBlockLanguage: selectedBlockLanguage ? selectedBlockLanguage : 'json',
+      output: output ? output: 'No output yet. Please compile to see the output.',
+      consoleSize: consoleSize ? consoleSize : '30px'
+    };
+  }
 
   onBlocksUpdate = (updatedBlocks) => {
     this.setState({ blocks: updatedBlocks });
@@ -35,7 +86,6 @@ class App extends React.Component {
 
   addBlockHandler = () => {
     let clonedBlocks = this.state.blocks.map(block => ({ ...block }));
-    // console.log(this.state.blocks);
     clonedBlocks.push({
       id: this.state.nextBlockId,
       title: 'Input Script Block ' + this.state.nextBlockId,
@@ -373,14 +423,20 @@ class App extends React.Component {
 
   onBlockLanguageSelectHandler = (e, { value }) => {
     let clonedBlocks = this.state.blocks.map(block => ({ ...block }));
-    let selectedBlockIndex;
+
+    // only choose language for selected block
+    // let selectedBlockIndex;
+    // for (let i = 0; i < clonedBlocks.length; i++) {
+    //   if (this.state.selectedBlock === clonedBlocks[i].id) {
+    //     selectedBlockIndex = i;
+    //     break;
+    //   }
+    // }
+    // clonedBlocks[selectedBlockIndex].language = value;
+
     for (let i = 0; i < clonedBlocks.length; i++) {
-      if (this.state.selectedBlock === clonedBlocks[i].id) {
-        selectedBlockIndex = i;
-        break;
-      }
+      clonedBlocks[i].language = value;
     }
-    clonedBlocks[selectedBlockIndex].language = value;
     this.setState({ blocks: clonedBlocks, selectedBlockLanguage: value });
     console.log("onBlockLanguageSelectHandler invoked!!!");
   };
@@ -429,7 +485,13 @@ class App extends React.Component {
       {script: this.makeUpScriptFile()},
       { headers: { 'Content-Type': 'application/json' } }
     );
-    console.log(response);
+    console.log(response["data"]["you sent"]);
+    this.setState({ output: response["data"]["you sent"] });
+    let curConsoleSize = parseInt(this.state.consoleSize, 10);
+    console.log('cur console size: ' + curConsoleSize);
+    if (curConsoleSize < 250) {
+      this.setState({ consoleSize: '250px' });
+    }
   }
 
   makeUpScriptFile = () => {
@@ -450,48 +512,90 @@ class App extends React.Component {
     return script;
   }
 
+  onConsoleSizeChangeHandler = (updatedSize) => {
+    this.setState({ consoleSize: updatedSize});
+  }
+
+  componentDidMount() {
+    window.addEventListener('beforeunload', this.cleanup);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('beforeunload', this.cleanup);
+  }
+
+  cleanup = () => {
+    localStorage.setItem('blocks', JSON.stringify(this.state.blocks));
+    localStorage.setItem('expandedBlocks', JSON.stringify(this.state.expandedBlocks));
+    localStorage.setItem('nextBlockId', this.state.nextBlockId);
+    localStorage.setItem('selectedBlock', this.state.selectedBlock);
+    localStorage.setItem('selectedBlockType', this.state.selectedBlockType);
+    localStorage.setItem('selectedBlockLanguage', this.state.selectedBlockLanguage);
+    localStorage.setItem('output', this.state.output);
+    localStorage.setItem('consoleSize', this.state.consoleSize);
+  }
+
   render() {
     console.log("App is rerendered, current blocks:");
     console.log(this.state.blocks);
     return (
-      <div>
-        <TopMenu
-          selectedBlock={this.state.selectedBlock}
-          selectedBlockType={this.state.selectedBlockType}
-          selectedBlockLanguage={this.state.selectedBlockLanguage}
-          addBlockHandler={this.addBlockHandler}
-          insertBlockAboveHandler={this.insertBlockAboveHandler}
-          insertBlockBelowHandler={this.insertBlockBelowHandler}
-          moveSelectedBlockUpHandler={this.moveSelectedBlockUpHandler}
-          moveSelectedBlockDownHandler={this.moveSelectedBlockDownHandler}
-          removeBlockHandler={this.removeBlockHandler}
-          copySelectedBlockHandler={this.copySelectedBlockHandler}
-          pasteBlockBelowHanlder={this.pasteBlockBelowHanlder}
-          onBlockTypeSelectHandler={this.onBlockTypeSelectHandler}
-          onBlockLanguageSelectHandler={this.onBlockLanguageSelectHandler}
-          onDownloadClickHandler={this.onDownloadClickHandler}
-          onCompileClickHandler={this.onCompileClickHandler}
-        />
-        {/* <p>My Token = {window.token}</p> */}
-        <div className="main-area">
-          <div className="ui container">
-            {/* <VerticalMenu /> */}
-            <Editor
-              blocks={this.state.blocks}
-              onBlockDropDownClick={this.onBlockDropDownClick}
-              expandedBlocks={this.state.expandedBlocks}
-              removeBlockHandler={this.removeBlockHandler}
-              onBlockSelected={this.onBlockSelected}
-              selectedBlock={this.state.selectedBlock}
-              onBlocksUpdate={this.onBlocksUpdate}
-              addOptionWithinBlockHandler={this.addOptionWithinBlockHandler}
-              onOptionTabSelected={this.onOptionTabSelected}
-              onOptionDeleteHandler={this.onOptionDeleteHandler}
-              onBlockContentChangeHandler={this.onBlockContentChangeHandler}
-            />
-          </div>
-        </div>
-      </div>
+      <React.Fragment>
+          <TopMenu
+            selectedBlock={this.state.selectedBlock}
+            selectedBlockType={this.state.selectedBlockType}
+            selectedBlockLanguage={this.state.selectedBlockLanguage}
+            addBlockHandler={this.addBlockHandler}
+            insertBlockAboveHandler={this.insertBlockAboveHandler}
+            insertBlockBelowHandler={this.insertBlockBelowHandler}
+            moveSelectedBlockUpHandler={this.moveSelectedBlockUpHandler}
+            moveSelectedBlockDownHandler={this.moveSelectedBlockDownHandler}
+            removeBlockHandler={this.removeBlockHandler}
+            copySelectedBlockHandler={this.copySelectedBlockHandler}
+            pasteBlockBelowHanlder={this.pasteBlockBelowHanlder}
+            onBlockTypeSelectHandler={this.onBlockTypeSelectHandler}
+            onBlockLanguageSelectHandler={this.onBlockLanguageSelectHandler}
+            onDownloadClickHandler={this.onDownloadClickHandler}
+            onCompileClickHandler={this.onCompileClickHandler}
+          />
+          <SplitPane
+            split="horizontal"
+            className="main-area"
+            // initialSize={this.state.consoleSize}
+            onChange={(size) => {
+                console.log('The pane size is changing!!!');
+                console.log(size[1]);
+                this.setState({consoleSize: size[1]});
+            }}
+          >
+            <div className="main-editor">
+              <div className="ui container">
+                <Editor
+                  blocks={this.state.blocks}
+                  onBlockDropDownClick={this.onBlockDropDownClick}
+                  expandedBlocks={this.state.expandedBlocks}
+                  removeBlockHandler={this.removeBlockHandler}
+                  onBlockSelected={this.onBlockSelected}
+                  selectedBlock={this.state.selectedBlock}
+                  onBlocksUpdate={this.onBlocksUpdate}
+                  addOptionWithinBlockHandler={this.addOptionWithinBlockHandler}
+                  onOptionTabSelected={this.onOptionTabSelected}
+                  onOptionDeleteHandler={this.onOptionDeleteHandler}
+                  onBlockContentChangeHandler={this.onBlockContentChangeHandler}
+                />
+              </div>
+            </div>
+            <Pane
+              initialSize={this.state.consoleSize}
+              minSize="30px"
+            >
+              <Console
+                output={this.state.output}
+                consoleSize={this.state.consoleSize}
+                onConsoleSizeChangeHandler={this.onConsoleSizeChangeHandler}
+              />
+            </Pane>
+          </SplitPane>
+      </React.Fragment>
     );
   }
 }

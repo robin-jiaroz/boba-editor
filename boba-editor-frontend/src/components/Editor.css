@@ -3,5 +3,12 @@
 }
 
 .main-area {
-  margin-top: 100px;
+  height: 90% !important;
+  overflow: auto !important;
+}
+
+.main-editor {
+  padding-top: 10px;
+  height: 100%;
+  overflow: auto;
 }

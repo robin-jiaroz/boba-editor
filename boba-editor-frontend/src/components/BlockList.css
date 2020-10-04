@@ -75,9 +75,11 @@
 
 .options-tab-container {
   background-color: rgb(221, 221, 221);
-  height: 30px;
-  overflow: auto;
+  /* height: 30px; */
+  overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
+  scrollbar-width: thin;
   /* padding-left: 41px; */
 }
 
